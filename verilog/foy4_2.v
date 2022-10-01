@@ -2,13 +2,13 @@ module pattern_recog(input datain, clk,
         output dataout);
         //1101011 
         parameter   IDLE 	= 0,
-  			        S1 		= 1,
-  			        S11 	= 2,
-  			        S110 	= 3,
-  			        S1101 	= 4,
-  			        S11010 	= 5,
-  			        S110101 = 6,
-                    S1101011 = 7;
+  		    S1 	        = 1,
+  		    S11 	= 2,
+  		    S110 	= 3,
+  		    S1101 	= 4,
+  		    S11010 	= 5,
+  		    S110101     = 6,
+                    S1101011    = 7;
         reg[2:0] cur_state, next_state;
         assign dataout = (cur_state == S1101011) ? 1 : 0;
 
