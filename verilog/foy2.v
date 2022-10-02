@@ -89,3 +89,27 @@ module logical_shift (A,B,CNT,D);
     assign D = A;
 endmodule
 
+// give a value for N (bit number) to add two N bit numbers
+module n_bit_adder( A,B,carry_in, sum,carry_out);
+
+                   parameter N=8;
+                   input[N-1:0] A,B;
+                   input carry_in;
+
+                   output[N-1:0] sum;
+                   output carry_out;
+                   wire[N-1:0] carry;
+
+                   genvar i;
+                   generate 
+                      for (i = 0; i < N ; i = i+1)
+                        begin
+                          if(i == 0)
+                            full_adder f1(A[0], B[0], carry_in, sum[0], carry[0]);
+                          else 
+                            full_adder f2(A[i], B[i], carry[i-1], sum[i], carry[i]);
+                        end 
+                      assign carry_out = carry[N-1];
+                   endgenerate
+                   
+endmodule
