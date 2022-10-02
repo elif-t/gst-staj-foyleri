@@ -1,37 +1,36 @@
-module counter(clk, leds);
 
-    input clk;
-    output[7:0] leds;
-    reg[7:0] cnt;
+module counter(clk,SW,leds);
+  input clk,SW;
+  output[7:0] leds;
 
-    always@(posedge clk) begin
-          cnt <= cnt + 1;
+  tff tf1(leds[0],clk,SW);
+  tff tf2(leds[1],leds[0],SW);
+  tff tf3(leds[2],leds[1],SW);
+  tff tf4(leds[3],leds[2],SW);
+  tff tf5(leds[4],leds[3],SW);
+  tff tf6(leds[5],leds[4],SW);
+  tff tf7(leds[6],leds[5],SW);
+  tff tf8(leds[7],leds[6],SW);
+  
+endmodule
+
+module tff(clk,SW,leds);
+  input clk,SW;
+  output leds;
+  wire d;
+  dff df1(leds,d,clk,SW);
+  not n1(d,leds);
+endmodule
+
+module dff(leds,d,clk,SW);
+  input d,clk,SW;
+  output leds;
+  reg leds; // store the output value
+  always @(posedge clk)
+   begin
+    if(SW) 
+        leds=d;
+    else 
+        leds=d;
     end
-    assign leds = cnt;
-
-endmodule
-
-module ripple_carry_adder(A,sum, carry_out);
-                        input[7:0] A;
-                        output[7:0] rip_sum;
-                        output carry_out;
-                        wire[7:0] carry;
-                        genvar i;
-                        generate
-                        for(i = 0; i < 8 ; i = i + 1) begin
-                            if( i == 0)
-                                full_adder u1(A[0], 1'b1, 1'b0, rip_sum[0], carry[0]);
-                            else 
-                                full_adder u2(A[i], 1'b1, carry[i-1], rip_sum[i], carry[i]);
-                        end
-                        assign carry_out = carry[7];
-                        endgenerate                        
-endmodule
-
-module full_adder(input A,B,carry_in,
-                  output sum, carry_out);
-
-                  assign  sum = (A ^ B ^ carry_in);
-                  assign  carry_out = (A & B) | (A & carry_in) | (B & carry_in);
-
 endmodule
