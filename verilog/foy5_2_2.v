@@ -1,6 +1,10 @@
-module jdoodle(coin, one_coin,clk, reset, dispense);
+`timescale 1ns / 1ps
 
-                        input[1:0] coin,one_coin;
+module foy5_vending_machine(coin_25, coin_50, D_in, clk, reset, dispense);
+    
+                        // D_in = 1 tl  coin_25 = 25 kr, coin_50 = 50 kr
+                        // şişe su 1 tl - 25 kr, 50 kr ve 1 tl atabilir                  
+                        input[1:0] coin_25, D_in, coin_50;
                         input clk, reset;
                         output reg dispense;
 
@@ -14,79 +18,60 @@ module jdoodle(coin, one_coin,clk, reset, dispense);
                                 current_state <= next_state;
                         end
 
-                        always @(current_state or coin or one_coin) begin
+                        always @(*) begin
                             case(current_state)
                                 sWait : begin
-                                            if(coin  == 2'b00)
-                                                next_state = sWait;
-                                            else begin
-                                                if (coin == 2'b01)
-                                                    next_state = s25;
-                                                else
-                                                    if (coin == 2'b10)
-                                                        next_state = s50;
-                                            end
-                                        end
-                                s25   : begin
-                                            if (coin == 2'b00)
+                                            if(coin_25 == 1'b1)
                                                 next_state = s25;
-                                            else begin
-                                                if (coin == 2'b01)
-                                                    next_state = s50;
-                                                else 
-                                                    if (coin == 2'b10)
-                                                        next_state = s75;
-                                            end
-                                        end
-                                s50   : begin
-                                            if (coin == 2'b00)
+                                            else if (coin_50 == 1'b1)
                                                 next_state = s50;
-                                            else begin
-                                                if (coin == 2'b01)
-                                                    next_state = s75;
-                                                else
-                                                    if (coin == 2'b10)
-                                                        next_state = sWait;  
-                                            end
-                                        end
-                                s75   : begin 
-                                            if(coin == 2'b00)
-                                                next_state = s75;
                                             else
                                                 next_state = sWait;
+                                        end
+                                s25   : begin
+                                            if (coin_25 == 1'b1)
+                                                next_state = s50;
+                                            else if(coin_50 == 1'b1)
+                                                next_state = s75;
+                                            else 
+                                                next_state = s25;
+                                        end
+                                s50   : begin
+                                            if(coin_25 == 1'b1)
+                                                next_state = s75;
+                                            else if(coin_50 == 1'b1)
+                                                next_state = sWait;
+                                            else 
+                                                next_state = s75;
+                                        end
+                                s75   : begin 
+                                            if(coin_25 == 1'b1)
+                                                next_state = sWait;
+                                            else if(coin_50 == 1'b1)
+                                                next_state = sWait;
+                                            else
+                                                next_state = s75;
                                         end
                                 default: next_state = sWait;
                             endcase
-                            
                         end
 
-                        always@(current_state or coin or one_coin) begin
+                        always@(*) begin
                             case(current_state)
-                                sWait : begin
-                                        if( one_coin == 1'b1)
+                                sWait : if( D_in == 1'b1)
                                             dispense <= 1'b1;
                                         else
                                             dispense <= 1'b0;
-                                        end
                                 s25   : dispense <= 1'b0;
-                                s50   : dispense <= 1'b0;
-                                s75   : begin
-                                            if(coin == 1)
-                                                dispense <= 1'b1;
-                                            else
-                                                dispense <= 1'b0;
-                                        end
+                                s50   : if(coin_50 == 1'b1)
+                                            dispense <= 1'b1;
+                                        else 
+                                            dispense <= 1'b0;
+                                s75   : if(coin_25 == 1'b1 || coin_50 == 1'b1)
+                                            dispense <= 1'b1;
+                                        else
+                                            dispense <= 1'b0;
                                 default: dispense = 1'b0;
                             endcase
                         end
 endmodule
-
-/*always@(current_state or coin) begin
-                            case(current_state)
-                                sWait : dispense <= 1'b0;
-                                s25   : dispense <= 1'b0;
-                                s50   : dispense <= 1'b0;
-                                s75   : dispense <= 1'b1;
-                                default: dispense <= 1'b0;
-                            endcase
-                        end*/
