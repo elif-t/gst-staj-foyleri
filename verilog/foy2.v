@@ -1,4 +1,4 @@
-module ALU(A,B,CNT,alu_result);
+module foy2(A,B,CNT,alu_result);
     input[31:0] A,B;
     input[3:0] CNT;
     reg[31:0] alu_result;
