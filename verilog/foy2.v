@@ -1,8 +1,10 @@
-module ALU(A,B,CNT,D);
+module ALU(A,B,CNT,alu_result);
     input[31:0] A,B;
     input[3:0] CNT;
-    output[31:0] D;
     reg[31:0] alu_result;
+    initial begin
+        alu_result = {32{1'b0}};
+    end
     wire[4:0] temp;
     wire[31:0] add_out,subs_out,carry;
     genvar i;
@@ -87,3 +89,24 @@ module full_adder(input A,B,carry_in,
                   assign  carry_out = (A & B) | (A & carry_in) | (B & carry_in);
 
 endmodule
+
+/*
+`timescale 1ns / 1ps
+
+module tb_foy2;
+
+    reg[31:0] A, B;
+    reg[3:0] CNT;
+    wire[31:0] alu_result;
+    
+    foy2 uut(.A(A), .B(B), .CNT(CNT), .alu_result(alu_result));
+    
+    initial begin
+        A = 4;
+        B = 8;
+        CNT = 4'b0010;
+        #100;
+    end
+    
+endmodule
+*/
