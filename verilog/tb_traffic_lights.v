@@ -8,16 +8,14 @@ module tb_traffic_lights;
     wire[2:0] light_2;
     traffic_lights dut(.clk(clk), .reset(reset), .light_1(light_1), .light_2(light_2));
     
-    initial clk = 0;
+    initial clk = 1;
     always #10 clk = ~clk;
     
     initial begin
         reset = 0;
-        #1000000000;
+        #100;
         reset = 1;
-        #1000000000;
-        reset = 0;
-        #(1000000000*200);
+        #100;
         $finish;
     end
     
