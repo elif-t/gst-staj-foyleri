@@ -31,11 +31,10 @@ module ripple_carry_adder(A,B,sum);
 endmodule
 
 // give a value for N (bit number) to add two N bit numbers
-module n_bit_adder( A,B,carry_in, sum,carry_out);
+module foy1( A,B, sum,carry_out);
 
-                   parameter N=8;
+                   parameter N=32;
                    input[N-1:0] A,B;
-                   input carry_in;
 
                    output[N-1:0] sum;
                    output carry_out;
@@ -46,7 +45,7 @@ module n_bit_adder( A,B,carry_in, sum,carry_out);
                       for (i = 0; i < N ; i = i+1)
                         begin
                           if(i == 0)
-                            full_adder f1(A[0], B[0], carry_in, sum[0], carry[0]);
+                                      full_adder f1(A[0], B[0], 1'b0 , sum[0], carry[0]);
                           else 
                             full_adder f2(A[i], B[i], carry[i-1], sum[i], carry[i]);
                         end 
@@ -54,5 +53,26 @@ module n_bit_adder( A,B,carry_in, sum,carry_out);
                    endgenerate
                    
 endmodule
+
+/*
+`timescale 1ns / 1ps
+
+module tb_foy1;
+    reg[31:0] A, B;
+    wire[31:0] sum;
+    wire carry_out;
+    
+    foy1 uut(.A(A), .B(B), .sum(sum), .carry_out(carry_out));
+    
+    initial begin
+        A = 101;
+        B = 101;
+        #100;
+    end
+    
+endmodule
+*/
+
+
 
 
