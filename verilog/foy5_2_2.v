@@ -75,3 +75,39 @@ module foy5_vending_machine(coin_25, coin_50, D_in, clk, reset, dispense);
                             endcase
                         end
 endmodule
+
+/* 
+`timescale 1ns / 1ps
+
+module tb_foy5_vending_machine;
+    
+    // inputs 
+    reg[1:0] coin_25, coin_50, D_in;
+    reg clk, reset;
+    // output
+    wire dispense;
+
+    foy5_vending_machine uut(.coin_25(coin_25), .coin_50(coin_50), .D_in(D_in), .clk(clk), .reset(reset), .dispense(dispense));
+    initial clk = 0;
+    always begin
+        #10 clk = ~clk; 
+    end 
+    
+    initial begin
+        reset = 1'b1;
+        #20 reset = 1'b0;
+        coin_25 = 1'b1;
+        #20 reset = 1'b1; coin_25 = 1'b0;
+        #20 reset = 1'b0;
+        coin_50 = 1'b1;
+        #20 reset = 1'b1; coin_50 = 1'b0;
+        #20 reset = 1'b0;
+        D_in = 1'b1;
+        #20 reset = 1'b1;
+        #20 reset = 1'b0;
+        #20
+        $finish;
+    end 
+    
+endmodule
+*/
