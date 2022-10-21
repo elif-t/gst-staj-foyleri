@@ -23,19 +23,39 @@ module tb_pwm;
 endmodule
 */
 
+
 module pwm_duty(clk, duty, pwm_out);
     input clk;
     input[3:0] duty;
-    output pwm_out;
-    reg[7:0] counter = 0;
+    output reg pwm_out;
     integer my_int;
     always @( duty )
         my_int = duty;
-
-    always @(posedge clk) begin
-        if(counter < 100) counter <= counter +1;
-        else counter <= 0;
+    
+    reg[7:0] counter = 0;
+    always@ (posedge clk) begin
+        if(counter<100) begin counter <= counter + 1;
+            pwm_out <= (counter < (my_int/2)) ? 1 : 0;
+            end
+        else
+        counter <= 0;
     end
-    assign pwm_out = (counter < my_int) ? 1:0 ; 
-
+    
 endmodule
+
+/*
+module tb_pwm;
+    reg clk;
+    reg [3:0] duty;
+    wire pwm_out;
+    pwm_duty uut(.clk(clk), .duty(duty), .pwm_out(pwm_out));
+    initial begin
+        duty <= 4'b1111;
+        #1000
+        $finish;
+    end
+    initial clk = 0;
+    always #10 clk = ~clk;
+    
+endmodule
+*/
