@@ -1,23 +1,25 @@
 module pwm(clk, pwm_out);
     input clk;
-    output pwm_out;
-    
+    output reg pwm_out;
+    // %20 duty cycle
     reg[7:0] counter = 0;
     always@ (posedge clk) begin
-        if(counter < 20) counter <= counter + 1;
-        else counter <= 0;
+        if(counter<100) begin counter <= counter + 1;
+        pwm_out <= (counter < 10) ? 1 : 0;
+        end
+        else
+        counter <= 0;
     end
-    // %20 duty cycle period 20ms use 20ns clock signal
-    assign pwm_out = (counter < 4) ? 1:0 ; 
-
+    
 endmodule
 
 /*
 module tb_pwm;
-    reg clk = 0;
-    wire pwm_out = 0;
-    pwm UUT(clk, duty, pwm_out);
-    always #5 clk = ~clk;
+    reg clk;
+    wire pwm_out;
+    pwm uut(.clk(clk), .pwm_out(pwm_out));
+    initial clk = 1;
+    always #10 clk = ~clk;
 endmodule
 */
 
