@@ -1,92 +1,56 @@
+`timescale 1ns / 1ps
 
 module serial_to_parallel(a, clk, start, ready, out_p);
+
     input a, clk, start;
     output reg ready;
     output reg [7:0] out_p;
-    parameter IDLE = 2'b00, START = 2'b01, TRANSMIT = 2'b10, STOP = 2'b11;
-    reg [1:0] STATE;
-    reg [2:0] COUNTER;
-
-
-    always @(posedge clk or start) begin
-        if (~start) begin
-            STATE <= IDLE;
+    
+    reg[7:0] temp;
+    
+    
+    always@(posedge clk)
+        if(~start) begin
             ready <= 0;
-            COUNTER <= 0;   
+            out_p = 8'b00000000;
         end
         else begin
-            if(STATE == IDLE) begin
-                STATE <= START;
-                ready <= 0;
-                COUNTER <= 1 ;
-            end
-            else (STATE  == START)
-                if(LOAD)
-                    STATE <= TRANSMIT;
-                else
-                    STATE <= IDLE;
-            
-
+            temp = out_p >> 1;
+            out_p = {a, temp[6:0]};
+            ready <= 1;
         end
-                           
-    end
-    
-    
-endmodule
+        
+endmodule 
 
 /*
+`timescale 1ns / 1ps
 
-module jdoodle(a, clk, start, ready, out_p);
-    input a, clk, start;
-    output reg ready;
-    output reg [7:0] out_p;
+module tb_serial_to_parallel;
 
-    parameter IDLE = 2'b00, START = 2'b01, TRANSMIT = 2'b10, STOP = 2'b11;
-    reg [1:0] STATE;
-    reg [2:0] COUNTER;
+    reg clk, start, a;
+    wire[7:0] out_p;
+    wire ready;
 
-    always @ ( posedge clk or start)
-        if (~start) begin
-            STATE <= IDLE;
-            ready <= 1;
-            COUNTER <= 0;   
-        end
-        else begin
-            if (STATE == IDLE) begin
-                READY <= 1;
-                COUNTER <= 0;
-                if (LOAD) begin
-                    STATE <= START;
-                end
-                else
-                    STATE <= IDLE;
-            end
-            else
-                if (STATE == START)
-                    STATE <= TRANSMIT;
-                else
-                    if (STATE == TRANSMIT) begin
-                        COUNTER <= COUNTER + 1;
-                        if (COUNTER == 7)
-                            STATE <= STOP;
-                    end
-                    else begin
-                        STATE <= IDLE;
-                        READY <= 1;
-                    end     
+    serial_to_parallel uut(.a(a), .clk(clk), .start(start), .ready(ready), .out_p(out_p));
+ 
+    initial begin
+        clk <= 0;
+        a <= 1;
+        start <= 0;
+        #10
+        start <= 1;
+        #10 a <= 1;
+        #10 a <= 0;
+        #10 a <= 0;
+        #10 a <= 0;
+        #10 a <= 0;
+        #10 a <= 1;
+        #10 a <= 1;
+        #30
+        $finish;
     end
-
-    always @( * ) begin
-        if (STATE == IDLE)
-            PAR_OUT = 1;
-        else
-            if (STATE == START)
-                PAR_OUT = 0;
-            else
-                if (STATE == TRANSMIT)
-                    PAR_OUT[COUNTER] = SER_IN;
-                else
-                    PAR_OUT = 1;        
-    end 
     
-endmodule */
+    always #5 clk = ~clk;
+    
+endmodule
+*/
