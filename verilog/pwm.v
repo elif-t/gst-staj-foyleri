@@ -29,8 +29,9 @@ module pwm_duty(clk, duty, pwm_out);
     input[3:0] duty;
     output reg pwm_out;
     integer my_int;
+    // 100/15 = 6.66666667 when input 0000 duty %0 when input 1111 duty %100
     always @( duty )
-        my_int = duty;
+        my_int = (6.66666667)duty;
     
     reg[7:0] counter = 0;
     always@ (posedge clk) begin
